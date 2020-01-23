@@ -1,0 +1,63 @@
+#!/bin/bash
+#SBATCH –p normal # Partición (cola)
+#SBATCH –N 3 # Número de nodos
+#SBATCH –n 8 # Número de núcleos
+#SBATCH –t 2-10:00 # Límite de tiempo (D-HH:MM)
+#SBATCH –o salida.out # Salida STDOUT
+#SBATCH –e error.err # Salida STDERR
+
+#Load the modules
+module load plink/1.90
+
+module load admixture/1.3.0
+
+#With this loop you are going to transform the vcf to plink format and remove underscores
+for i in $(ls *.txt); do
+
+plink --vcf $i --double-id --allow-extra-chr --make-bed --out "${i%.*}"
+
+sed -i 's/_//g' "${i%.*}.bim"
+
+#This loop run Admixture!!!
+for K in 1 2 3 4 5 6 7 8 9 10;  do admixture --cv=10 "${i%.*}.bed" $K | tee log${K}.out;
+done;
+
+#for j in $(ls *.out); do mv $j "${i%.*}.${j%.*}"; done
+
+grep -h CV log*.out > "${i%.*}.cvout"
+
+done
+
+##clean your output files
+
+for i in $(ls *.cvout); do
+
+sed -i 's/CV error (//g; s/)://g; s/K=//g' $i;
+
+done
+
+##select the best K
+
+for i in $(ls *.cvout); do
+x=$(cut -d " " -f 2 $i | sort -n | head -1)
+grep $x $i | cut -d " " -f 1 >> frecuency.txt;
+done
+
+
+####now lets try it with fastStructure
+for i in $(ls *.bim); do
+for j in 1 2 3 4 5 6 7 8 9 10;
+do python2 /home/fabian/software/fastStructure/structure.py -K $j --cv=20 --input="${i%.*}" --output="${i%.*}_out";
+done;
+done
+### select the best k
+for i in $(ls *.bim); do
+python2 /home/fabian/software/fastStructure/chooseK.py --input="${i%.*}_out" > "${i%.*}.bestk.txt";
+done
+
+#create frecuency files
+
+for i in $(ls *.txt); do
+awk 'NR == 1' $i | cut -d "=" -f 2 >> freq1.txt
+awk 'NR == 2' $i | cut -d "=" -f 2 >> freq2.txt;
+done
