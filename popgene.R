@@ -114,20 +114,23 @@ all.equal(row.names(pwFST_mt), colnames(pwFST_mt))
 library("ggplot2")
 library("reshape")
 
-# Convert the distance matrix to data.frame.
-pwFST_dist <- melt(pwFST_mt)
+# Convert the distance matrix to data.frame
+dist_matrix<-pwFST_mt
+dist_matrix[upper.tri(dist_matrix)]<-NA
+pwFST_dist <- reshape2::melt(dist_matrix, na.rm=T)
 head(pwFST_dist)
 
 # Set the order of rows/columns to follow geographic location.
-pwFST_dist$X1 <- factor(pwFST_dist$X1, levels =c("pr","m","cv","spnov","g","d","o","p","n"))
-pwFST_dist$X2 <- factor(pwFST_dist$X2, levels =c("pr","m","cv","spnov","g","d","o","p","n"))
+levels(pwFST_dist$Var1)<-c("pr","m","cv","spnov","g","d","o","p","n","c")
+levels(pwFST_dist$Var2)<-c("pr","m","cv","spnov","g","d","o","p","n","c")
 
 # Set up heatmap plot
 pdf("Fst_heatmap.pdf")
-heatmap_plot <- ggplot(pwFST_dist, aes(X1, X2)) + geom_tile(aes(fill=value)) +
-  scale_fill_gradient(name = "Fst",low = "#FFFFFF",high = "#012345")
+heatmap_plot <- ggplot(pwFST_dist, aes(Var1, Var2)) + geom_tile(aes(fill=value)) +
+  scale_fill_gradient(name = "Fst",low = "#FFFFFF",high = "#012345")+theme_bw()
 heatmap_plot
 dev.off()
+
 
 ###AMOVA
 library(poppr)
@@ -139,7 +142,7 @@ gen.dist <- dist(x = x, method = "euclidean", diag=TRUE, upper=TRUE)
 AMOVA <- poppr.amova(x, hier = ~reg/pop, dist = gen.dist, squared = TRUE, within = FALSE, quiet = FALSE)
 ###DAPC
 ##according to variation select the bestk, keep all the PCs that you want
-grp <- find.clusters(x, max.n.clust=40)
+grp <- find.clusters(x, max.n.clust=40) #kept 80 PCs and selected 7 clusters
 ###Check if your categorization is consistent with your apriori information
 table(pop(x), grp$grp)
 table.value(table(pop(x), grp$grp), col.lab=paste("inf", 1:7),row.lab=levels(x$pop))
@@ -147,6 +150,6 @@ table.value(table(pop(x), grp$grp), col.lab=paste("inf", 1:7),row.lab=levels(x$p
 dapc1 <- dapc(x, grp$grp)
 scatter(dapc1, scree.da=FALSE, bg="white", pch=20,  cell=0, cstar=0, solid=.4,cex=3,clab=0, leg=TRUE)
 ###perfom the dapc based in your original grouping
-dapc1 <- dapc(x, x$pop)
-scatter(dapc1, scree.da=FALSE, bg="white", pch=20,  cell=0, cstar=0, solid=.4,cex=3,clab=0, leg=TRUE)
-scatter(dapc1,1,1, bg="white",scree.da=FALSE, legend=TRUE, solid=.4)
+dapc2 <- dapc(x, x$pop)
+scatter(dapc2, scree.da=FALSE, bg="white", pch=20,  cell=0, cstar=0, solid=.4,cex=3,clab=0, leg=TRUE)
+scatter(dapc2,1,1, bg="white",scree.da=FALSE, legend=TRUE, solid=.4)
