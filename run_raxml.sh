@@ -5,7 +5,7 @@ vcftools --vcf <your_vcf> --max-missing 0.55 --mac 3 --recode --recode-INFO-all 
 
 #then trnsform that vcf to phylip using the vcf2phylip.py script obtained from: https://github.com/edgardomortiz/vcf2phylip/blob/master/vcf2phylip.py
 
-python vcf2phylip.py --input <your_filtered_vcf>
+python ~/shared/polythore_total/old_plate/scripts/vcf2phylip.py --input <your_filtered_vcf>
 
 ###With obteined phylyip your have to implemet a correction to the branch length, prepare the input using this script
 module load py34-biopython/1.71
@@ -14,7 +14,7 @@ module load python3.6/3.6.6
 
 module swap py3-numpy py36-numpy/1.14.2
 
-python3 ascbias.py -p polythore_filtered.min4.recode.min4.phy
+python3 ~/shared/polythore_total/old_plate/scripts/ascbias.py -p polythore_filtered.min4.recode.min4.phy
 
 ##run RAxML
 

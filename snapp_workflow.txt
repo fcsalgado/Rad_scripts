@@ -1,0 +1,9 @@
+### first select 150 SNPs random from your vcf, this is because of computer time
+#extract the head of the vcf
+head -n 11 new_unliked.vcf > cabeza.txt
+#Select random 150 SNPs
+shuf -n 250 new_unliked.vcf >random.txt
+#Cat both files
+cat cabeza.txt random.txt > random_ploythore.vcf
+#Run the vcf2phylip.py to transform the vcf to nexus SNAPP format
+python /datacnmat01/biologia/biologia.evolutiva/shared/polythore_total/old_plate/scripts/vcf2phylip.py -i random_nomissing.vcf -b
