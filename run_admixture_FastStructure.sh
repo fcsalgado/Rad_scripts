@@ -15,15 +15,19 @@ plink --vcf 090_filtered_without_outgroups.vcf --double-id --allow-extra-chr --s
 
 plink --vcf 090_filtered_without_outgroups.vcf --double-id --allow-extra-chr --set-missing-var-ids @:# --extract archivo.intermedio.prune.in --make-bed --out unlinked_090_polythore --vcf-idspace-to "-"
 
+##if your vcf is the output of random_snps_rad.sh, just run the following lines
+
+plink --vcf random_vcf.vcf --double-id --allow-extra-chr --make-bed --out gasteracantha --vcf-idspace-to "-"
+
 ###run admixture
 
 #if your chromose labels has special character such as "_" remove those, admixture just receive integers as input. run the following command to prune the chromosome name=
 
-sed -i 's/_//g' unlinked_090_polythore.bim
-sed -i 's/locus//g' unlinked_090_polythore.bim
+sed -i 's/_//g' gasteracantha.bim
+sed -i 's/locus//g' gasteracantha.bim
 
 ## run Admixture!
-for K in 1 2 3 4 5 6 7 8 9 10;  do admixture --cv=10 unlinked_090_polythore.bed $K | tee log${K}.out; done
+for K in 1 2 3 4 5 6 7 8 9 10;  do admixture --cv=10 gasteracantha.bed $K | tee log${K}.out; done
 
 ###Choose the best K
 
@@ -35,6 +39,7 @@ grep "K=" $i | cut -f 3,4 -d " " | sed -r 's/:/=/g' >> bestk.txt; done
 
 #for fastStructure
 
+for K in 1 2 3 4 5 6 7 8 9 10;  python structure.py -K $K --input=gasteracantha --output=gasteracantha_out
 
 
 

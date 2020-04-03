@@ -1,5 +1,7 @@
 #! /bin/bash
 
+#To run this script you hace to execute it follow by the name of your VCF file
+
 file=${1?Error: no given name}
 #create a file with the number of SNPs per locus, replace the awk number by the number of header lines
 grep "#" $file > random_vcf.vcf
@@ -12,11 +14,6 @@ cat counts_by_loci.txt | while read i;
 do
 number=$(grep "$i" counts_by_loci.txt | cut -d " " -f 1)
 locus=$(grep "$i" counts_by_loci.txt | cut -d " " -f 2)
-if [ $number -gt 1 ]
-then
-  grep "$locus" $file | shuf -n 1 >> random_vcf.vcf
-else
-  grep "$locus" $file >> random_vcf.vcf
-fi; done
+grep "$locus" $file | shuf -n 1 >> random_vcf.vcf; done
 
 rm counts_by_loci.txt
