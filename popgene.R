@@ -25,6 +25,8 @@ rm(list=ls())
 # Set working directory.
 #setwd("/home/user/Desktop/Tutorial")
 
+###IMPORTANT
+#If the above did nor work, you have to do the transofrmation in PGDspider, tranform to a genpop object. Tranforming using de popfile.txt as strata and to the resulting filke add the word head as the first line
 ### Load libraries needed.
 #library("gplots")
 library("vegan")
