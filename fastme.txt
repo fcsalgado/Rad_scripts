@@ -1,9 +1,18 @@
-##prepare your input
+##format your vcf
 plink --double-id --vcf clust90.vcf --recode A-transpose --allow-extra-chr --out temporal
 
 tail -n +2 temporal.traw | cut -f 1,4- | perl -p -e 's/\bNA\b/-1/g' | gzip > INPUT.geno.gz
 
 grep "CHROM" clust90.vcf | cut -f 10- | tr "\t" "\n" > INPUT.labels
-##calculate gene distances
+###Calculate the distances
+~/software/ngsDist/./ngsDist --geno INPUT.geno.gz --n_ind 163 --n_sites 9373 --labels INPUT.labels --n_boot_rep 500 --boot_block_size 10 --n_threads 10 --out gen_dist.txt
 
-~/software/ngsDist/./ngsDist --geno INPUT.geno.gz --n_ind 163 --n_sites 9373 --labels INPUT.labels --n_boot_rep 500 --boot_block_size 10 --n_threads 10 --out gen_dist
+##Run Fastme
+
+fastme -T 40 -i gen_dist.txt -s -D 501 -o testA.nwk -m BioNJ -B boot.trees -n NNI -s -b 1002
+
+#separate main and bootstrap trees
+head -n 1 testA.nwk > mainTree.nwk
+tail -n +2 testA.nwk | awk 'NF' > bootTrees.nwk
+##add support
+raxmlHPC -f b -t mainTree.nwk -z bootTrees.nwk -m GTRCAT -n nj_tree
