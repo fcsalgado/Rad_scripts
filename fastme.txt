@@ -1,0 +1,9 @@
+##prepare your input
+plink --double-id --vcf clust90.vcf --recode A-transpose --allow-extra-chr --out temporal
+
+tail -n +2 temporal.traw | cut -f 1,4- | perl -p -e 's/\bNA\b/-1/g' | gzip > INPUT.geno.gz
+
+grep "CHROM" clust90.vcf | cut -f 10- | tr "\t" "\n" > INPUT.labels
+##calculate gene distances
+
+~/software/ngsDist/./ngsDist --geno INPUT.geno.gz --n_ind 163 --n_sites 9373 --labels INPUT.labels --n_boot_rep 500 --boot_block_size 10 --n_threads 10 --out gen_dist
