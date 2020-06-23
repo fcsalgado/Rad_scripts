@@ -27,7 +27,8 @@ sed -i 's/_//g' gasteracantha.bim
 sed -i 's/locus//g' gasteracantha.bim
 
 ## run Admixture!
-for K in 1 2 3 4 5 6 7 8 9 10;  do admixture --cv=10 gasteracantha.bed $K | tee log${K}.out; done
+for K in $(echo {1..15});  do admixture --cv=10 gasteracantha.bed $K | tee log${K}.out; done
+
 
 ###Choose the best K
 
@@ -39,7 +40,7 @@ grep "K=" $i | cut -f 3,4 -d " " | sed -r 's/:/=/g' >> bestk.txt; done
 
 #for fastStructure
 
-for K in 1 2 3 4 5 6 7 8 9 10;  python structure.py -K $K --input=gasteracantha --output=gasteracantha_out
+for K in $(echo {1..15});  python structure.py -K $K --input=gasteracantha --output=gasteracantha_out
 
 
 
