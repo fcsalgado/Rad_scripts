@@ -24,7 +24,7 @@ vcftools --vcf <your_filtered_vcf2> --missing-indv
 
 awk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
 
-vcftools --vcf <your_vcf> --remove lowDP.indv --recode --recode-INFO-all --out <your_filtered_vcf3>
+vcftools --vcf <your_filtered_vcf2> --remove lowDP.indv --recode --recode-INFO-all --out <your_filtered_vcf3>
 
 ###If you want to keep high quality snps, restrict the data to variants called in a high percentage of individuals (say 90%), minor allele frequency (0.05) and filter by mean depth of genotypes (20)
 
@@ -36,6 +36,7 @@ vcftools --vcf <your_filtered_vcf3> --max-missing 0.95 --maf 0.05 --min-meanDP 2
 
 vcftools --vcf <your_filtered_vcf3> --hwe 0.05 --recode --out <vcf_hwe_snps>
 
+##Remember to select one snps per tag, for that you have to run the random_snp.sh script ;)
 ##Convert your VCF to plink
 
 vcftools --vcf <vcf_hwe_snps> --plink --out <plink_hwe>
