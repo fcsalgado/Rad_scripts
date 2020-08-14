@@ -47,3 +47,23 @@ for K in $(echo {1..15});  python structure.py -K $K --input=gasteracantha --out
 #transform bim file again to a vcf
 
 plink --bfile gasteracantha --double-id --allow-extra-chr --set-missing-var-ids @:# --recode vcf --out filter_linked.vcf
+
+###Run fineRADstructure
+
+#Transform your VCF to hap matrix
+
+~/software/fineRADstructure/./RADpainter hapsFromVCF ../vcf/polythore_popgen.vcf > polythore_popgene_input.txt
+
+##Calculate coancestry matrix
+
+~/software/fineRADstructure/./RADpainter paint polythore_popgene_input.txt
+
+##Assign individuals to populations
+
+~/software/fineRADstructure/./finestructure -x 100000 -y 1000000 -z 1000 polythore_popgene_input_chunks.out  polythore_popgene_input_chunks.mcmc.xml
+
+##Build tree
+
+~/software/fineRADstructure/./finestructure -m T -x 10000 polythore_popgene_input_chunks.out polythore_popgene_input_chunks.mcmc.xml polythore_popgene_input_chunks.mcmcTree.xml
+
+##To plot the result please use the R function found in https://cichlid.gurdon.cam.ac.uk/fineRADstructure.html
