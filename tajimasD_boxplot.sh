@@ -12,4 +12,10 @@ library(ggplot2)
 tabla<-read.table("tem_tajima.txt",head=F)
 col<-read.table("../../paleta_colores.txt",head=F)
 col<-col[order(col$V1),]
-ggplot(tabla,aes(x=V1,y=V2,fill=V1))+geom_boxplot()+scale_fill_manual(values=as.character(col$V2))
+pdf("tajimasD.pdf",height=15,width=20)
+ggplot(tabla,aes(x=V1,y=V2,fill=V1))+geom_boxplot()+scale_fill_manual(values=as.character(col$V2))+scale_x_discrete(name="Species")+scale_y_continuous(name="Tajima's D",limits=c(-3,4))+theme_classic()
+dev.off()
+
+
+
+
