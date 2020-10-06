@@ -32,8 +32,7 @@ for K in $(echo {1..15});  do admixture --cv=10 gasteracantha.bed $K | tee log${
 
 ###Choose the best K
 
-for i in $(ls log*);do
-grep "K=" $i | cut -f 3,4 -d " " | sed -r 's/:/=/g' >> bestk.txt; done
+for i in $(ls log*);do grep "K=" $i | cut -f 3,4 -d " " | sed -r 's/\((\K)\=(\w+)\)\:/\1\2/g' >> bestk.txt; done; cut -f 2 -d "K" bestk.txt | sort -k1,1n > bestk_sorted.txt
 
 #after choose your best K, run the following:
 
