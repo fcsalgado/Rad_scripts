@@ -22,6 +22,10 @@ for i in in $(echo {1..10}); do
 for m  in $(echo {1..6});  
 do /home/fabian/software/treemix-1.13/src/./treemix -i treemix_input.frq.gz -m $m -g out_topology.vertices.gz out_topology.edges.gz -o out_migration"$m"_"$i";done;done
 
+##After this open the R package OptM an run the following lineto select the best migration edge
+
+optM(".", tsv = NULL, method = "Evanno", thresh = 0.05)
+
 ##Explore the llik files to look for the best value of m, the open R and plot the result
 source("/home/fabian/software/treemix-1.13/src/plotting_funcs.R")
 plot_tree("out_migration1")
