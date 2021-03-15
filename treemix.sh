@@ -18,9 +18,9 @@ python2 /home/fabian/software/treemix-1.13/src/plink2treemix.py plink.frq.strat.
 #bootstrapt over this topology (optional)
 /home/fabian/software/treemix-1.13/src/./treemix -i treemix_input.frq.gz -root mutata -bootstrap -k 100 -o out_topology
 ##you have to cover a range of possible migration events, lets test fo 1 to 6
-for i in in $(echo {1..10}); do
+for i in $(echo {1..10}); do
 for m  in $(echo {1..10});  
-do /home/fabian/software/treemix-1.13/src/./treemix -i treemix_input.frq.gz -m $m -g out_topology.vertices.gz out_topology.edges.gz -o out_migration"$m"_"$i";done;done
+do /home/fabian/software/treemix-1.13/src/./treemix -i treemix_input.frq.gz -m $m -root Amazon -bootstrap -k 500 -noss -g out_topology.vertices.gz out_topology.edges.gz -o out_migration"$m"_"$i";done;done
 
 ##After this open the R package OptM an run the following lineto select the best migration edge
 
