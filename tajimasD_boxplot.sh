@@ -1,11 +1,11 @@
 vcftools --vcf polythore_popgen.vcf --missing-indv
-cut -f 1 -d "_" out.imiss| sort | uniq > pops.txt
-touch total_tajima.txt
-cat pops.txt | while read pop; 
-do grep -oE "$pop\w+" out.imiss > $pop.txt
-vcftools --vcf polythore_popgen.vcf --TajimaD 150 --keep $pop.txt --out $pop
-R -e "tabla<-read.table('$pop.Tajima.D',head=T); taj<-tabla[,4]; pop<-rep('$pop',length(taj));tem<-data.frame(pop,taj);write.table(tem,file='$pop.box',col.names=F,row.names=F)"
-cat $pop.box >> total_tajima.txt; done
+touch tem_div.txt
+cut -f 1 -d "_" out.imiss | sort | uniq | while read pop; 
+do grep -E "$pop" out.imiss | cut -f 1 > $pop.txt
+vcftools --vcf common_tags.vcf --TajimaD 150 --keep $pop.txt --out $pop
+num=$(awk 'NR>1' $pop.Tajima.D | wc -l)
+paste <(echo "$(printf "$pop\n%.0s" {1..$num})") <(echo "$(cut -f 4 $pop.Tajima.D | awk 'NR >1')") --delimiters '\t' >> tem_div.txt
+;done
 
 ##Open R to plot TajimasD
 library(ggplot2)
