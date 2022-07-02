@@ -25,7 +25,8 @@ scatter(dapc.my_genind, col=c("#68af57","#fb6ea0","#00cec3"))
 ##crossvalidation
 
 set.seed(999)
-pramx <- xvalDapc(tab(my_genind, NA.method = "mean"), pop(my_genind))
+my_genind$pop<-grp$grp
+pramx <- xvalDapc(tab(my_genind, NA.method = "mean"), pop(my_genind),training.set=0.9,result="groupMean",center=T,scale=F,n.pca=NULL,n.rep=100)
 
 scatter(pramx$DAPC,cex = 2, legend = TRUE,
 clabel = FALSE, posi.leg = "bottomleft", col=c("#00cec3","#68af57","#fb6ea0"),
