@@ -4,10 +4,12 @@ library(phrynomics)
 
 vcf<-read.vcfR("random_vcf.vcf",verbose=F)
 my_genind <- vcfR2genind(vcf)
-#pop<-read.table("pop.txt",head=F)
-d<-t(as.data.frame(strsplit(nom, "\\_")))
-pop<-as.vector(d[,2])
-my_genind$pop<-as.factor(pop)
+pop<-read.table("pop.txt",head=F)
+clases<-c("Campinas","PFBA","Lencois","Acre","Leticia","Guaviare","Tarapoto","Moyobamba","Sucua","Misahualli","Jaen","Villavicencio","ElPangui","Gualaquiza","Banos","Alamor","Vilcabamba","Piura","Chiclayo","Lima","Santo","Quito","Bahia","Cali","Palmira","Boquia","Ibague","Medellin","Cucuta","Cartagena","Sanjuan","San")
+orden_pop$V1<-factor(orden_pop$V1, levels=clases)
+#d<-t(as.data.frame(strsplit(nom, "\\_")))
+#pop<-as.vector(d[,2])
+my_genind$pop<-as.factor(pop$V1)
 ##Calculate tyhe number of clusters
 grp <- find.clusters(my_genind, max.n.clust=40)
 ###Show your new groups based on your original pops
