@@ -6,11 +6,12 @@ lines=$(wc -l random_vcf.vcf | cut -f 1 -d " ")
 #calculate the repetitions per locus
 cut -f 1 $file | awk -v var=$lines 'NR > var' | sort | uniq -c | sed -E 's/^\s+(\w+)/\1/g' > counts_by_loci.txt
 
+
 N=10
 #select randon one nucleotide
 for k in $(echo {1..100}); do
 ((i=i%N)); ((i++==0)) && wait
 grep "#" $file > random_$k.vcf
-cat counts_by_loci.txt | while read i; do
-locus=$(grep "$i" counts_by_loci.txt | cut -d " " -f 2)
-grep "$locus" $file | shuf -n 1 >> random_$k.vcf;done;done
+cut -f 2 -d " " counts_by_loci.txt | shuf -n 500 > sampled.txt
+grep -f sampled.txt $file >> random_$k.vcf
+rm -f sampled.txt;done
