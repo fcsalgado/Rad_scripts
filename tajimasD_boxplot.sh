@@ -8,13 +8,17 @@ paste <(echo "$(printf "$pop\n%.0s" {1..$num})") <(echo "$(cut -f 4 $pop.Tajima.
 ;done
 
 ##Open R to plot TajimasD
-library(ggplot2)
-tabla<-read.table("tem_tajima.txt",head=F)
-col<-read.table("../../paleta_colores.txt",head=F)
-col<-col[order(col$V1),]
-pdf("tajimasD.pdf",height=15,width=20)
-ggplot(tabla,aes(x=V1,y=V2,fill=V1))+geom_boxplot()+scale_fill_manual(values=as.character(col$V2))+scale_x_discrete(name="Species")+scale_y_continuous(name="Tajima's D",limits=c(-3,4))+theme_classic()
-dev.off()
+library(tidyverse)
+datos<-read_delim("tem_div.txt",col_names=F)
+names(datos)<-c("tag","value","pop")
+niveles<-c("beata","mutata","spnov2","concinna","spnov1","procera","gigantea","terminata","derivata","ornata","neopicta","victoria")
+datos$pop<-factor(datos$pop,levels=niveles,ordered=TRUE)
+paleta1<-c("#00802a","#e8d479","#d82567","#ff72ce","#536200","#00ddcb","#002277","#ff9a7c","#95e790","#cf6c0f","#4b64db","#7a002d")
+ggplot(datos,aes(pop,value,fill=pop))+geom_point(shape = 21,size=2, position = position_jitter(width = .05),alpha=0.75)+geom_violin(alpha=0.4, position = position_dodge(width = .75),size=1)+geom_boxplot(outlier.size = -1,lwd=1.2, alpha = 0.7)+
+     #stat_summary(fun.data = "mean_sdl", geom = "pointrange", mult=1,colour = "black")+
+     scale_fill_manual(values=paleta1)+
+     scale_colour_manual(values=paleta1)+
+     theme_classic()
 
 
 
