@@ -1,4 +1,4 @@
-1. Create using the VCF file with multiple snps per tag, randomly sample 100 datasets (one random snp per tag everytime). Use the script create_random_vcfs.sh
+1. Select randomly with replacement 500 tags from the whole dataset to estimate parametes. Use the script create_random_vcfs_tags.sh
 2. create a SFS per random VCF using the script sfs_of_randomVCFs.sh
 3. add invariable sites to estimate params add_invSites_SFS.sh
 4. Run fsc26 for each dataset with the script param_est.sh
