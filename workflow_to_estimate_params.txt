@@ -3,4 +3,4 @@
 3. add invariable sites to estimate params add_invSites_SFS.sh
 4. Run fsc26 for each dataset with the script param_est.sh
 5. After this run joana meier script to select the best runs, saved as best_runs.sh
-6. in R calcukate the confidence intervals and mean
+6. in R calcukate the confidence intervals and mean, run calculate_bootstrap.R
