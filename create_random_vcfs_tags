@@ -1,17 +1,34 @@
 #!/bin/bash
+
+# Specify the input VCF file
 file=polythore_popgen.vcf
-#create a file with the number of SNPs per locus, replace the awk number by the number of header lines
+
+# Step 1: Create a file with header lines only
 grep "#" $file > random_vcf.vcf
+
+# Count the number of lines in the header file
 lines=$(wc -l random_vcf.vcf | cut -f 1 -d " ")
-#calculate the repetitions per locus
+
+# Step 2: Calculate the repetitions per locus
 cut -f 1 $file | awk -v var=$lines 'NR > var' | sort | uniq -c | sed -E 's/^\s+(\w+)/\1/g' > counts_by_loci.txt
 
-
+# Specify the number of random samples to generate
 N=10
-#select randon one nucleotide
-for k in $(echo {1..100}); do
-((i=i%N)); ((i++==0)) && wait
-grep "#" $file > random_$k.vcf
-cut -f 2 -d " " counts_by_loci.txt | shuf -n 500 > sampled.txt
-grep -f sampled.txt $file >> random_$k.vcf
-rm -f sampled.txt;done
+
+# Step 3: Select random nucleotides from each locus and create new VCF files
+for k in $(seq 1 100); do
+    # Avoid race condition by limiting the number of parallel processes
+    ((i=i%N)); ((i++==0)) && wait
+
+    # Create a new VCF file with header
+    grep "#" $file > random_$k.vcf
+
+    # Select 500 random loci from the counts_by_loci.txt file
+    cut -f 2 -d " " counts_by_loci.txt | shuf -n 500 > sampled.txt
+
+    # Extract the corresponding lines from the original VCF file
+    grep -f sampled.txt $file >> random_$k.vcf
+
+    # Clean up temporary files
+    rm -f sampled.txt
+done
