@@ -1,18 +1,30 @@
-##format your vcf
-plink --double-id --vcf clust90.vcf --recode A-transpose --allow-extra-chr --out temporal
+# Script for Formatting VCF, Calculating Distances, and Running Phylogenetic Analysis
 
-tail -n +2 temporal.traw | cut -f 1,4- | perl -p -e 's/\bNA\b/-1/g' | gzip > INPUT.geno.gz
+## Note: Ensure that the required software (PLINK, ngsDist, Fastme, RAxML) is installed and available in your PATH.
 
-grep "CHROM" clust90.vcf | cut -f 10- | tr "\t" "\n" > INPUT.labels
-###Calculate the distances
+## Format your VCF using PLINK
+plink --double-id --vcf <your_vcf> --recode A-transpose --allow-extra-chr --out temporal
+
+## Prepare genotype file for ngsDist
+# Note: This step assumes that PLINK generated the file 'temporal.traw'
+tail -n +2 <your_vcf> | cut -f 1,4- | perl -p -e 's/\bNA\b/-1/g' | gzip > INPUT.geno.gz
+
+## Create labels file for ngsDist
+# Note: This step extracts sample labels from the VCF header
+grep "CHROM" <your_vcf> | cut -f 10- | tr "\t" "\n" > INPUT.labels
+
+## Calculate genetic distances using ngsDist
+# Note: Adjust parameters (n_ind, n_sites, n_boot_rep, etc.) as needed
 ~/software/ngsDist/./ngsDist --geno INPUT.geno.gz --n_ind 163 --n_sites 9373 --labels INPUT.labels --n_boot_rep 500 --boot_block_size 10 --n_threads 10 --out gen_dist.txt
 
-##Run Fastme
-
+## Run Fastme for Phylogenetic Analysis
+# Note: Fastme is used to build the phylogenetic tree
 fastme -T 40 -i gen_dist.txt -s -D 501 -o testA.nwk -m BioNJ -B boot.trees -n NNI -s -b 1002
 
-#separate main and bootstrap trees
+# Separate main and bootstrap trees
 head -n 1 testA.nwk > mainTree.nwk
 tail -n +2 testA.nwk | awk 'NF' > bootTrees.nwk
-##add support
+
+# Add support using RAxML
+# Note: RAxML is used to add support values to the main tree using bootstrap trees
 raxmlHPC -f b -t mainTree.nwk -z bootTrees.nwk -m GTRCAT -n nj_tree
