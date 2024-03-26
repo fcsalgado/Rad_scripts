@@ -29,9 +29,9 @@ vcftools --vcf <your_filtered_vcf2> --missing-indv
 awk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
 vcftools --vcf <your_filtered_vcf2> --remove lowDP.indv --recode --recode-INFO-all --out <your_filtered_vcf3>
 
-### Step 3: Further filter for high-quality SNPs (90% call rate, 0.05 MAF, and mean depth of genotypes ≥ 20).
+### Step 3: Further filter for high-quality SNPs (90% call rate, 0.05 MAF, and mean depth of genotypes ≥ 10).
 
-vcftools --vcf <your_filtered_vcf3> --max-missing 0.95 --maf 0.05 --min-meanDP 20 --recode --recode-INFO-all --out <your_filtered_vcf4>
+vcftools --vcf <your_filtered_vcf3> --max-missing 0.95 --maf 0.05 --min-meanDP 10 --recode --recode-INFO-all --out <your_filtered_vcf4>
 
 ### Step 4: Filter by Hardy-Weinberg Equilibrium (HWE) and create a new VCF.
 
